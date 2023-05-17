@@ -18,6 +18,11 @@ namespace Helper.CommonHelper
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        /// Generates .log file and writes logs like Exception or Activity logs
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="logType"></param>
         public void AddLog(string text, string? logType = null)
         {
             if (!string.IsNullOrWhiteSpace(text))
@@ -34,38 +39,39 @@ namespace Helper.CommonHelper
                 using (StreamWriter writer = new StreamWriter(filePath, true))
                 {
                     text = GetCurrentDateTime().ToString() + " : " + text + "\n";
-                    //writer.WriteLine(string.Format(text, GetCurrentDateTime().ToString("dd/MM/yyyy hh:mm:ss tt")));
                     writer.WriteLine(text);
                     writer.Close();
                 }
             }
         }
 
-        public string GetPhysicalRootPath()
-        {
-            string directoryPath = "\\Files";
-            var physicalRootPath = _hostingEnvironment.WebRootPath + directoryPath;
-            return physicalRootPath;
-        }
-
-
+        /// <summary>
+        /// Gets relative path from current hosted evironment.
+        /// </summary>
+        /// <returns>Relative path in form of string</returns>
         public string GetRelativePath()
         {
             return Convert.ToString(_hostingEnvironment.ContentRootPath);
         }
 
-        public string GetRelativeRootPath()
-        {
-            string directoryPath = "\\Files";
-            string relativeRootPath = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + directoryPath;
-            return relativeRootPath;
-        }
-
+        /// <summary>
+        /// Gets current datetime for whole project
+        /// In case if need to use Centralized or standard time then change this function code only.
+        /// </summary>
+        /// <returns>DateTime object with current time</returns>
         public DateTime GetCurrentDateTime()
         {
             return DateTime.Now;
         }
 
+        /// <summary>
+        /// Generates the log specific string message and write the log in .log file
+        /// </summary>
+        /// <param name="apiUrl"></param>
+        /// <param name="methodType"></param>
+        /// <param name="request"></param>
+        /// <param name="requestResult"></param>
+        /// <returns></returns>
         public async Task AddActivityLog(string apiUrl, string methodType, string request, string requestResult)
         {
             try
@@ -77,9 +83,13 @@ namespace Helper.CommonHelper
                     AddLog(logText, CommonConstant.ActivityLog);
                 }
             }
-            catch (Exception) { throw; }
+            catch { throw; }
         }
 
+        /// <summary>
+        /// Adds log in Exception log file with log specific string
+        /// </summary>
+        /// <param name="exceptionText"></param>
         public void AddExceptionLog(string exceptionText)
         {
             try
@@ -90,7 +100,7 @@ namespace Helper.CommonHelper
                     AddLog(exceptionText, CommonConstant.ExceptionLog);
                 }
             }
-            catch (Exception) { throw; }
+            catch { throw; }
         }
 
     }
